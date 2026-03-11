@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Премиум · Цифровое меню</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <!-- Font Awesome 6 (бесплатные иконки) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 12px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .premium-shadow {
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
+        }
+        .category-chip {
+            transition: all 0.2s ease;
+            backdrop-filter: blur(5px);
+        }
+        .category-chip.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 20px -8px rgba(102, 126, 234, 0.6);
+        }
+        .item-card {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -12px rgba(0, 0, 0, 0.15);
+        }
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 10px -4px rgba(102, 126, 234, 0.5);
+        }
+        .add-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 15px -6px rgba(102, 126, 234, 0.7);
+        }
+        .remove-btn {
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .sticky-footer {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 -10px 30px -10px rgba(0, 0, 0, 0.1);
+        }
+        .categories-scroll {
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .categories-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .photo-gradient {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="root" class="w-full max-w-[400px] mx-auto rounded-3xl glass-card premium-shadow overflow-hidden"></div>
+
+    <!-- React и ReactDOM -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+
+    <script>
+        (function() {
+            // =====================================================================
+            // ███████╗ █████╗ ███████╗██╗   ██╗
+            // ██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝
+            // █████╗  ███████║███████╗ ╚████╔╝ 
+            // ██╔══╝  ██╔══██║╚════██║  ╚██╔╝  
+            // ██║     ██║  ██║███████║   ██║   
+            // ╚═╝     ╚═╝  ╚═╝╚══════╝   ╚═╝   
+            // =====================================================================
+            // ⚡ НАСТРОЙКИ МЕНЮ (меняй под клиента)
+            const CONFIG = {
+                managerUsername: "nesterenaa",          // ✅ Telegram менеджера
+                brandName: "Кофейня • Кофеин",
+                currency: "₽",
+                categories: ["Завтраки", "Кофе", "Десерты", "Лимонады"],
+                items: [
+                    // Завтраки
+                    { id: 1, category: "Завтраки", name: "Скрэмбл с лососем", price: 390, desc: "Яйца, слабосоленый лосось, авокадо, чиабатта" },
+                    { id: 2, category: "Завтраки", name: "Гранола с йогуртом", price: 290, desc: "Домашняя гранола, греческий йогурт, ягоды" },
+                    { id: 3, category: "Завтраки", name: "Бенедикт с беконом", price: 420, desc: "Английский маффин, пашот, голландский соус" },
+                    // Кофе
+                    { id: 4, category: "Кофе", name: "Раф малина-базилик", price: 320, desc: "Эспрессо, сливки, сироп, свежий базилик" },
+                    { id: 5, category: "Кофе", name: "Капучино", price: 250, desc: "Классический, 300 мл, плотная пенка" },
+                    { id: 6, category: "Кофе", name: "Латте карамель", price: 280, desc: "Молочный, 400 мл, карамельный сироп" },
+                    // Десерты
+                    { id: 7, category: "Десерты", name: "Тирамису", price: 350, desc: "Классический, савоярди, маскарпоне, какао" },
+                    { id: 8, category: "Десерты", name: "Чизкейк Нью-Йорк", price: 320, desc: "Сливочный, песочная основа, ягодный соус" },
+                    { id: 9, category: "Десерты", name: "Морковный торт", price: 290, desc: "С грецкими орехами, крем-чиз, апельсиновая цедра" },
+                    // Лимонады
+                    { id: 10, category: "Лимонады", name: "Мохито безалког", price: 210, desc: "Лайм, мята, спрайт, тростниковый сахар" },
+                    { id: 11, category: "Лимонады", name: "Облепиха-имбирь", price: 230, desc: "Облепиха, имбирь, мед, розмарин" }
+                ]
+            };
+            // =====================================================================
+
+            const STORAGE_KEY = 'qr_premium_cart';
+            const formatPrice = (p) => `${p} ${CONFIG.currency}`;
+
+            // Функция для генерации градиента на основе названия (чтобы фото были разными)
+            const getGradientForItem = (name) => {
+                const gradients = [
+                    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
+                    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+                    'linear-gradient(135deg, #30cfd0 0%, #330867 100%)',
+                    'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+                    'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)',
+                ];
+                const index = name.length % gradients.length;
+                return gradients[index];
+            };
+
+            function App() {
+                const [cart, setCart] = React.useState(() => {
+                    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } 
+                    catch { return {}; }
+                });
+                const [activeCategory, setActiveCategory] = React.useState(CONFIG.categories[0]);
+
+                React.useEffect(() => {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
+                }, [cart]);
+
+                const totalPrice = Object.entries(cart).reduce((acc, [id, qty]) => {
+                    const item = CONFIG.items.find(i => i.id === Number(id));
+                    return acc + (item ? item.price * qty : 0);
+                }, 0);
+                
+                const itemCount = Object.values(cart).reduce((acc, qty) => acc + qty, 0);
+
+                const addToCart = (itemId) => setCart(prev => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
+                const removeFromCart = (itemId) => {
+                    setCart(prev => {
+                        const newCart = { ...prev };
+                        if (newCart[itemId] > 1) newCart[itemId] -= 1;
+                        else delete newCart[itemId];
+                        return newCart;
+                    });
+                };
+
+                const sendOrder = () => {
+                    if (itemCount === 0) return;
+                    
+                    let message = `🛍 *Заказ из ${CONFIG.brandName}*\n`;
+                    message += `──────────────────\n`;
+                    
+                    CONFIG.items.forEach(item => {
+                        if (cart[item.id]) {
+                            message += `• ${item.name} x${cart[item.id]} — ${formatPrice(item.price * cart[item.id])}\n`;
+                        }
+                    });
+                    
+                    message += `──────────────────\n*💎 Итого: ${formatPrice(totalPrice)}*`;
+                    
+                    window.location.href = `https://t.me/${CONFIG.managerUsername}?text=${encodeURIComponent(message)}`;
+                };
+
+                const filteredItems = CONFIG.items.filter(item => item.category === activeCategory);
+
+                return React.createElement(
+                    'div',
+                    { className: 'p-5 pb-24' }, // pb для отступа от футера
+
+                    // Шапка с иконкой и названием
+                    React.createElement(
+                        'div',
+                        { className: 'flex items-center gap-3 mb-6 animate__animated animate__fadeIn' },
+                        React.createElement('div', { className: 'w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-xl shadow-lg' }, '🍽️'),
+                        React.createElement(
+                            'div',
+                            null,
+                            React.createElement('h1', { className: 'text-2xl font-bold text-gray-800' }, CONFIG.brandName),
+                            React.createElement('p', { className: 'text-sm text-gray-500' }, 'нажми + чтобы добавить')
+                        )
+                    ),
+
+                    // Категории (горизонтальный скролл)
+                    React.createElement(
+                        'div',
+                        { className: 'mb-6 overflow-x-auto categories-scroll whitespace-nowrap pb-2' },
+                        CONFIG.categories.map(cat =>
+                            React.createElement(
+                                'button',
+                                {
+                                    key: cat,
+                                    onClick: () => setActiveCategory(cat),
+                                    className: `inline-block mr-2 px-5 py-2.5 rounded-full text-sm font-medium category-chip transition-all ${
+                                        activeCategory === cat 
+                                            ? 'active shadow-lg scale-105' 
+                                            : 'bg-white/50 text-gray-700 hover:bg-white/80'
+                                    }`
+                                },
+                                cat
+                            )
+                        )
+                    ),
+
+                    // Товары
+                    React.createElement(
+                        'div',
+                        { className: 'space-y-4' },
+                        filteredItems.map(item => {
+                            const qty = cart[item.id] || 0;
+                            const gradient = getGradientForItem(item.name);
+                            
+                            return React.createElement(
+                                'div',
+                                {
+                                    key: item.id,
+                                    className: 'item-card bg-white/80 rounded-2xl p-4 flex gap-4 animate__animated animate__fadeInUp'
+                                },
+                                // Фото с уникальным градиентом
+                                React.createElement(
+                                    'div',
+                                    {
+                                        className: 'w-20 h-20 rounded-xl flex-shrink-0 text-3xl shadow-md',
+                                        style: { background: gradient }
+                                    },
+                                    React.createElement('div', { className: 'w-full h-full flex items-center justify-center' },
+                                        item.category === 'Завтраки' ? '🍳' : 
+                                        item.category === 'Кофе' ? '☕' : 
+                                        item.category === 'Десерты' ? '🍰' : '🧋'
+                                    )
+                                ),
+                                // Инфо
+                                React.createElement(
+                                    'div',
+                                    { className: 'flex-1' },
+                                    React.createElement('h3', { className: 'font-semibold text-gray-800 text-lg' }, item.name),
+                                    React.createElement('p', { className: 'text-xs text-gray-500 mb-2' }, item.desc),
+                                    React.createElement('div', { className: 'font-bold text-indigo-600' }, formatPrice(item.price)),
+                                    
+                                    // Кнопки управления
+                                    React.createElement(
+                                        'div',
+                                        { className: 'flex items-center gap-2 mt-2 justify-end' },
+                                        qty > 0 &&
+                                            React.createElement(
+                                                'button',
+                                                {
+                                                    onClick: () => removeFromCart(item.id),
+                                                    className: 'w-8 h-8 rounded-full remove-btn text-gray-700 font-bold hover:bg-white/50 transition-all'
+                                                },
+                                                '−'
+                                            ),
+                                        qty > 0 &&
+                                            React.createElement(
+                                                'span',
+                                                { className: 'font-semibold text-indigo-600 min-w-[20px] text-center' },
+                                                qty
+                                            ),
+                                        React.createElement(
+                                            'button',
+                                            {
+                                                onClick: () => addToCart(item.id),
+                                                className: 'w-8 h-8 rounded-full add-btn text-white font-bold hover:shadow-lg transition-all'
+                                            },
+                                            '+'
+                                        )
+                                    )
+                                )
+                            );
+                        })
+                    ),
+
+                    // Липкий футер с корзиной
+                    itemCount > 0 &&
+                    React.createElement(
+                        'div',
+                        {
+                            className: 'fixed bottom-0 left-0 right-0 sticky-footer p-4',
+                            style: { maxWidth: '400px', margin: '0 auto', borderRadius: '24px 24px 0 0' }
+                        },
+                        React.createElement(
+                            'div',
+                            { className: 'flex items-center justify-between' },
+                            React.createElement(
+                                'div',
+                                null,
+                                React.createElement('span', { className: 'text-gray-500 text-sm' }, 'Всего'),
+                                React.createElement('div', { className: 'text-2xl font-bold text-indigo-600' }, formatPrice(totalPrice)),
+                                React.createElement('span', { className: 'text-xs text-gray-400' }, `${itemCount} позиций`)
+                            ),
+                            React.createElement(
+                                'button',
+                                {
+                                    onClick: sendOrder,
+                                    className: 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2 transition-all hover:shadow-xl active:scale-95'
+                                },
+                                '📲 Отправить заказ',
+                                React.createElement('i', { className: 'fas fa-paper-plane text-sm' })
+                            )
+                        )
+                    )
+                );
+            }
+
+            const root = document.getElementById('root');
+            ReactDOM.createRoot(root).render(React.createElement(App));
+        })();
+    </script>
+</body>
+</html>
