@@ -227,7 +227,7 @@
     <script>
         (function() {
             // ================================================================
-            // ⚡ ПРАВИЛЬНОЕ РАСПРЕДЕЛЕНИЕ ФОТО
+            // ⚡ ПОЛНОСТЬЮ ИСПРАВЛЕННОЕ МЕНЮ
             // ================================================================
             const CONFIG = {
                 managerUsername: "nesterenaa",
@@ -256,64 +256,66 @@
                     "Соусы": "🧂"
                 },
                 
-               // ✅ ИСПРАВЛЕННЫЙ БЛОК С ТОВАРАМИ (вставь в CONFIG.items)
-items: [
-    // САЛАТЫ
-    { id: 1, category: "Салаты", name: "Куриный", price: 250, desc: "160 г", image: null },
-    { id: 2, category: "Салаты", name: "Овощной", price: 250, desc: "160 г", image: null },
-    { id: 3, category: "Салаты", name: "Оливье", price: 250, desc: "160 г", image: null },
-    { id: 4, category: "Салаты", name: "Шакароб", price: 250, desc: "160 г", image: "shakarob.png" },
-    { id: 5, category: "Салаты", name: "Грибной", price: 250, desc: "160 г", image: null },
-    { id: 6, category: "Салаты", name: "Император", price: 250, desc: "160 г", image: null },
+                // ✅ ИСПРАВЛЕННЫЙ СПИСОК ТОВАРОВ
+                items: [
+                    // САЛАТЫ
+                    { id: 1, category: "Салаты", name: "Куриный", price: 250, desc: "160 г", image: null },
+                    { id: 2, category: "Салаты", name: "Овощной", price: 250, desc: "160 г", image: null },
+                    { id: 3, category: "Салаты", name: "Оливье", price: 250, desc: "160 г", image: null },
+                    { id: 4, category: "Салаты", name: "Шакароб", price: 250, desc: "160 г", image: "shakarob.png" },
+                    { id: 5, category: "Салаты", name: "Грибной", price: 250, desc: "160 г", image: null },
+                    { id: 6, category: "Салаты", name: "Император", price: 250, desc: "160 г", image: null },
 
-    // ГОРЯЧИЕ БЛЮДА
-    { id: 7, category: "Горячие блюда", name: "Бефстроганов", price: 600, desc: "350 г", image: null },
-    { id: 8, category: "Горячие блюда", name: "Жареная курица с картошкой", price: 480, desc: "400 г", image: null },
-    { id: 9, category: "Горячие блюда", name: "Казан-кебаб", price: 730, desc: "350 г", image: "kazan_kebab.png" },
-    { id: 10, category: "Горячие блюда", name: "Манты", price: 480, desc: "400 г", image: "manty.png" },
-    { id: 11, category: "Горячие блюда", name: "Плов", price: 480, desc: "400 г", image: "plov.png" },
+                    // ГОРЯЧИЕ БЛЮДА
+                    { id: 7, category: "Горячие блюда", name: "Бефстроганов", price: 600, desc: "350 г", image: null },
+                    { id: 8, category: "Горячие блюда", name: "Жареная курица с картошкой", price: 480, desc: "400 г", image: null },
+                    { id: 9, category: "Горячие блюда", name: "Казан-кебаб", price: 730, desc: "350 г", image: "kazan_kebab.png" },
+                    { id: 10, category: "Горячие блюда", name: "Манты", price: 480, desc: "400 г", image: "manty.png" },
+                    { id: 11, category: "Горячие блюда", name: "Плов", price: 480, desc: "400 г", image: "plov.png" },
 
-    // СУПЫ
-    { id: 12, category: "Супы", name: "Борщ со сметаной", price: 480, desc: "400 г", image: null },
-    { id: 13, category: "Супы", name: "Долма-шурпа", price: 480, desc: "400 г", image: null },
-    { id: 14, category: "Супы", name: "Лагман", price: 480, desc: "400 г", image: "lagman.png" },
-    { id: 15, category: "Супы", name: "Чучвара", price: 480, desc: "400 г", image: null },
-    { id: 16, category: "Супы", name: "Шурпа", price: 480, desc: "400 г", image: "shurpa.png" },
-    { id: 17, category: "Супы", name: "Шурпа из баранины", price: 500, desc: "400 г", image: "shurpa.png" },
+                    // СУПЫ
+                    { id: 12, category: "Супы", name: "Борщ со сметаной", price: 480, desc: "400 г", image: null },
+                    { id: 13, category: "Супы", name: "Долма-шурпа", price: 480, desc: "400 г", image: null },
+                    { id: 14, category: "Супы", name: "Лагман", price: 480, desc: "400 г", image: "lagman.png" },
+                    { id: 15, category: "Супы", name: "Чучвара", price: 480, desc: "400 г", image: null },
+                    { id: 16, category: "Супы", name: "Шурпа", price: 480, desc: "400 г", image: "shurpa.png" },
+                    { id: 17, category: "Супы", name: "Шурпа из баранины", price: 500, desc: "400 г", image: "shurpa.png" },
 
-    // ШАШЛЫКИ (исправлено!)
-    { id: 18, category: "Шашлыки", name: "Люля-кебаб", price: 360, desc: "140 г", image: "lyulya.png" },
-    { id: 19, category: "Шашлыки", name: "Овощи на мангале", price: 350, desc: "200 г", image: null },
-    { id: 20, category: "Шашлыки", name: "Шашлык из баранины", price: 470, desc: "180 г", image: "shashlyk_baran.png" },
-    { id: 21, category: "Шашлыки", name: "Шашлык из говядины", price: 440, desc: "180 г", image: null },
-    { id: 22, category: "Шашлыки", name: "Шашлык из курицы", price: 400, desc: "180 г", image: null },
+                    // ШАШЛЫКИ (исправлено!)
+                    { id: 18, category: "Шашлыки", name: "Люля-кебаб", price: 360, desc: "140 г", image: "lyulya.png" },
+                    { id: 19, category: "Шашлыки", name: "Овощи на мангале", price: 350, desc: "200 г", image: null },
+                    { id: 20, category: "Шашлыки", name: "Шашлык из баранины", price: 470, desc: "180 г", image: "shashlyk_baran.png" },
+                    { id: 21, category: "Шашлыки", name: "Шашлык из говядины", price: 440, desc: "180 г", image: null },
+                    { id: 22, category: "Шашлыки", name: "Шашлык из курицы", price: 400, desc: "180 г", image: null },
 
-    // ВЫПЕЧКА
-    { id: 23, category: "Выпечка", name: "Лепешка", price: 120, desc: "300 г", image: "lepeshka.png" },
-    { id: 24, category: "Выпечка", name: "Самса из баранины", price: 200, desc: "200 г", image: "samsa.png" },
-    { id: 25, category: "Выпечка", name: "Самса из говядины", price: 180, desc: "200 г", image: "samsa.png" },
-    { id: 26, category: "Выпечка", name: "Самса из курицы", price: 170, desc: "200 г", image: "samsa.png" },
-    { id: 27, category: "Выпечка", name: "Самса из тандыра", price: 200, desc: "200 г", image: "samsa.png" },
+                    // ВЫПЕЧКА
+                    { id: 23, category: "Выпечка", name: "Лепешка", price: 120, desc: "300 г", image: "lepeshka.png" },
+                    { id: 24, category: "Выпечка", name: "Самса из баранины", price: 200, desc: "200 г", image: "samsa.png" },
+                    { id: 25, category: "Выпечка", name: "Самса из говядины", price: 180, desc: "200 г", image: "samsa.png" },
+                    { id: 26, category: "Выпечка", name: "Самса из курицы", price: 170, desc: "200 г", image: "samsa.png" },
+                    { id: 27, category: "Выпечка", name: "Самса из тандыра", price: 200, desc: "200 г", image: "samsa.png" },
 
-    // ГАРНИРЫ
-    { id: 28, category: "Гарниры", name: "Картофель фри", price: 200, desc: "150 г", image: null },
-    { id: 29, category: "Гарниры", name: "Макароны отварные", price: 200, desc: "130 г", image: null },
-    { id: 30, category: "Гарниры", name: "Пюре картофельное", price: 200, desc: "150 г", image: null },
-    { id: 31, category: "Гарниры", name: "Рис", price: 200, desc: "150 г", image: null },
+                    // ГАРНИРЫ
+                    { id: 28, category: "Гарниры", name: "Картофель фри", price: 200, desc: "150 г", image: null },
+                    { id: 29, category: "Гарниры", name: "Макароны отварные", price: 200, desc: "130 г", image: null },
+                    { id: 30, category: "Гарниры", name: "Пюре картофельное", price: 200, desc: "150 г", image: null },
+                    { id: 31, category: "Гарниры", name: "Рис", price: 200, desc: "150 г", image: null },
 
-    // НАПИТКИ (исправлено название)
-    { id: 32, category: "Напитки", name: "Borjomi", price: 170, desc: "500 мл", image: null },
-    { id: 33, category: "Напитки", name: "Вода без газа", price: 120, desc: "500 мл", image: null },
-    { id: 34, category: "Напитки", name: "Добрый Кола 1л", price: 200, desc: "1 л", image: "cola.png" },
-    { id: 35, category: "Напитки", name: "Добрый Кола 0.5л", price: 150, desc: "500 мл", image: "cola.png" },
-    { id: 36, category: "Напитки", name: "Натахтари", price: 180, desc: "500 мл", image: null },
+                    // НАПИТКИ (исправлено название)
+                    { id: 32, category: "Напитки", name: "Borjomi", price: 170, desc: "500 мл", image: null },
+                    { id: 33, category: "Напитки", name: "Вода без газа", price: 120, desc: "500 мл", image: null },
+                    { id: 34, category: "Напитки", name: "Добрый Кола 1л", price: 200, desc: "1 л", image: "cola.png" },
+                    { id: 35, category: "Напитки", name: "Добрый Кола 0.5л", price: 150, desc: "500 мл", image: "cola.png" },
+                    { id: 36, category: "Напитки", name: "Натахтари", price: 180, desc: "500 мл", image: null },
 
-    // СОУСЫ
-    { id: 37, category: "Соусы", name: "Майонез", price: 50, desc: "50 г", image: null },
-    { id: 38, category: "Соусы", name: "Перец острый", price: 50, desc: "50 г", image: null },
-    { id: 39, category: "Соусы", name: "Сметана", price: 60, desc: "50 г", image: null },
-    { id: 40, category: "Соусы", name: "Томатный соус", price: 60, desc: "50 г", image: null }
-]
+                    // СОУСЫ
+                    { id: 37, category: "Соусы", name: "Майонез", price: 50, desc: "50 г", image: null },
+                    { id: 38, category: "Соусы", name: "Перец острый", price: 50, desc: "50 г", image: null },
+                    { id: 39, category: "Соусы", name: "Сметана", price: 60, desc: "50 г", image: null },
+                    { id: 40, category: "Соусы", name: "Томатный соус", price: 60, desc: "50 г", image: null }
+                ]
+            };
+            // ================================================================
 
             const STORAGE_KEY = 'uzbek_halal_cart';
             const COMMENT_KEY = 'uzbek_halal_comment';
@@ -507,7 +509,7 @@ items: [
                         )
                     ),
 
-                    // Список товаров с правильными фото
+                    // Список товаров
                     React.createElement(
                         'div',
                         { className: 'space-y-3' },
