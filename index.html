@@ -208,9 +208,9 @@
             color: #ffd700;
         }
         
-        /* Отступ для футера */
+        /* Увеличенный отступ для футера */
         .pb-safe {
-            padding-bottom: 180px;
+            padding-bottom: 200px;
         }
     </style>
 </head>
@@ -411,7 +411,7 @@
                     
                     window.location.href = `https://t.me/${CONFIG.managerUsername}?text=${encodeURIComponent(message)}`;
                     
-                    // Очищаем корзину после отправки (комментарий и тип заказа сохраняются)
+                    // Очищаем корзину после отправки
                     setCart({});
                 };
 
@@ -419,7 +419,7 @@
 
                 return React.createElement(
                     'div',
-                    { className: 'p-5 pb-36 text-white' }, // Увеличил отступ снизу для футера
+                    { className: 'p-5 pb-48 text-white' }, // 👈 УВЕЛИЧЕННЫЙ ОТСТУП (было pb-36, стало pb-48)
 
                     // Шапка
                     React.createElement(
@@ -550,7 +550,7 @@
                         })
                     ),
 
-                    // 📝 ПОЛЕ ДЛЯ ОСОБЫХ ПОЖЕЛАНИЙ (теперь точно здесь!)
+                    // 📝 ПОЛЕ ДЛЯ ОСОБЫХ ПОЖЕЛАНИЙ
                     itemCount > 0 &&
                     React.createElement(
                         'div',
