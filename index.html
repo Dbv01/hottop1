@@ -207,6 +207,11 @@
             font-size: 10px;
             color: #ffd700;
         }
+        
+        /* Отступ для футера */
+        .pb-safe {
+            padding-bottom: 180px;
+        }
     </style>
 </head>
 <body>
@@ -406,7 +411,7 @@
                     
                     window.location.href = `https://t.me/${CONFIG.managerUsername}?text=${encodeURIComponent(message)}`;
                     
-                    // Очищаем корзину после отправки
+                    // Очищаем корзину после отправки (комментарий и тип заказа сохраняются)
                     setCart({});
                 };
 
@@ -414,7 +419,7 @@
 
                 return React.createElement(
                     'div',
-                    { className: 'p-5 pb-24 text-white' },
+                    { className: 'p-5 pb-36 text-white' }, // Увеличил отступ снизу для футера
 
                     // Шапка
                     React.createElement(
@@ -545,11 +550,11 @@
                         })
                     ),
 
-                    // 📝 ПОЛЕ ДЛЯ ОСОБЫХ ПОЖЕЛАНИЙ
+                    // 📝 ПОЛЕ ДЛЯ ОСОБЫХ ПОЖЕЛАНИЙ (теперь точно здесь!)
                     itemCount > 0 &&
                     React.createElement(
                         'div',
-                        { className: 'mt-4 animate__animated animate__fadeIn' },
+                        { className: 'mt-4 mb-4 animate__animated animate__fadeIn' },
                         React.createElement('label', { className: 'text-sm text-amber-200/70 block mb-2' }, 
                             '📝 Особые пожелания:'
                         ),
