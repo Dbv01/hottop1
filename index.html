@@ -145,6 +145,39 @@
             color: rgba(255, 255, 255, 0.3);
         }
         
+        .toggle-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .toggle-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 16px;
+            font-weight: 600;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .toggle-btn.active-dinein {
+            background: linear-gradient(135deg, #b8860b 0%, #ffd700 100%);
+            color: #1a0c0c;
+            border-color: #ffd700;
+            box-shadow: 0 5px 15px -5px #ffd700;
+        }
+        
+        .toggle-btn.active-takeaway {
+            background: linear-gradient(135deg, #a0a0a0 0%, #e0e0e0 100%);
+            color: #1a0c0c;
+            border-color: #ffffff;
+            box-shadow: 0 5px 15px -5px #ffffff80;
+        }
+        
         .categories-scroll {
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
@@ -187,7 +220,7 @@
     <script>
         (function() {
             // ================================================================
-            // ⚡ ГОТОВЫЙ ПРОДУКТ - ХАЛЯЛЬ УЗБЕКСКАЯ КУХНЯ
+            // ⚡ ФИНАЛЬНЫЙ ПРОДУКТ - ХАЛЯЛЬ УЗБЕКСКАЯ КУХНЯ
             // ================================================================
             const CONFIG = {
                 // 👇 МЕНЯЙ ТОЛЬКО ЭТО
@@ -195,7 +228,7 @@
                 brandName: "Халяль · Узбекская кухня",
                 currency: "₽",
                 
-                // 🔥 АКЦИЯ ДНЯ (меняй под клиента)
+                // 🔥 АКЦИЯ ДНЯ
                 promo: {
                     enabled: true,
                     title: "🔥 Комбо «Сытный обед»",
@@ -220,7 +253,7 @@
                     "Соусы": "🧂"
                 },
                 
-                // ПОЛНОЕ МЕНЮ (40+ позиций)
+                // ПОЛНОЕ МЕНЮ
                 items: [
                     // САЛАТЫ
                     { id: 1, category: "Салаты", name: "Куриный", price: 250, desc: "160 г" },
@@ -283,9 +316,10 @@
 
             const STORAGE_KEY = 'uzbek_halal_cart';
             const COMMENT_KEY = 'uzbek_halal_comment';
+            const ORDER_TYPE_KEY = 'uzbek_halal_order_type';
             const formatPrice = (p) => `${p} ${CONFIG.currency}`;
 
-            // Генерация уникального номера заказа (ДДММ-ЧЧММ)
+            // Генерация уникального номера заказа
             const generateOrderNumber = () => {
                 const now = new Date();
                 const day = String(now.getDate()).padStart(2, '0');
@@ -305,11 +339,20 @@
                     return localStorage.getItem(COMMENT_KEY) || '';
                 });
                 
+                // 🍽️ Тип заказа: 'dinein' (здесь) или 'takeaway' (с собой)
+                const [orderType, setOrderType] = React.useState(() => {
+                    return localStorage.getItem(ORDER_TYPE_KEY) || 'dinein';
+                });
+                
                 const [activeCategory, setActiveCategory] = React.useState(CONFIG.categories[0]);
 
                 React.useEffect(() => {
                     localStorage.setItem(COMMENT_KEY, comment);
                 }, [comment]);
+
+                React.useEffect(() => {
+                    localStorage.setItem(ORDER_TYPE_KEY, orderType);
+                }, [orderType]);
 
                 React.useEffect(() => {
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
@@ -340,6 +383,10 @@
                     
                     let message = `🥘 *Заказ №${orderNumber}*\n`;
                     message += `📍 ${CONFIG.brandName}\n`;
+                    
+                    // 🍽️ Добавляем тип заказа
+                    message += orderType === 'dinein' ? '🏠 *Здесь*\n' : '🛍️ *С собой*\n';
+                    
                     message += `──────────────────\n`;
                     
                     CONFIG.items.forEach(item => {
@@ -351,8 +398,7 @@
                     message += `──────────────────\n`;
                     message += `*💰 Итого: ${formatPrice(totalPrice)}*\n`;
                     
-                    // ✅ Комментарий добавляется ТОЛЬКО если там что-то есть
-                    if (comment.trim() !== '') {
+                    if (comment.trim()) {
                         message += `✏️ *Комментарий:* ${comment.trim()}\n`;
                     }
                     
@@ -362,14 +408,13 @@
                     
                     // Очищаем корзину после отправки
                     setCart({});
-                    // Комментарий НЕ очищаем (может пригодиться для следующего заказа)
                 };
 
                 const filteredItems = CONFIG.items.filter(item => item.category === activeCategory);
 
                 return React.createElement(
                     'div',
-                    { className: 'p-5 pb-32 text-white' },  // 👈 УВЕЛИЧИЛ ОТСТУП СНИЗУ ДО 32 (было 24)
+                    { className: 'p-5 pb-24 text-white' },
 
                     // Шапка
                     React.createElement(
@@ -504,7 +549,7 @@
                     itemCount > 0 &&
                     React.createElement(
                         'div',
-                        { className: 'mt-4 mb-4 animate__animated animate__fadeIn' },  // 👈 ДОБАВИЛ mb-4
+                        { className: 'mt-4 animate__animated animate__fadeIn' },
                         React.createElement('label', { className: 'text-sm text-amber-200/70 block mb-2' }, 
                             '📝 Особые пожелания:'
                         ),
@@ -517,7 +562,7 @@
                         })
                     ),
 
-                    // Футер с корзиной
+                    // Футер с корзиной и переключателем
                     itemCount > 0 &&
                     React.createElement(
                         'div',
@@ -527,21 +572,49 @@
                         },
                         React.createElement(
                             'div',
-                            { className: 'flex items-center justify-between' },
+                            { className: 'flex flex-col gap-3' },
+                            
+                            // 🍽️ Переключатель ЗДЕСЬ / С СОБОЙ
                             React.createElement(
                                 'div',
-                                null,
-                                React.createElement('span', { className: 'text-amber-200/70 text-sm' }, 'Ваш заказ'),
-                                React.createElement('div', { className: 'text-2xl font-bold gold-text' }, formatPrice(totalPrice)),
-                                React.createElement('span', { className: 'text-xs text-amber-200/50' }, `${itemCount} позиций`)
+                                { className: 'toggle-container' },
+                                React.createElement(
+                                    'div',
+                                    {
+                                        onClick: () => setOrderType('dinein'),
+                                        className: `toggle-btn ${orderType === 'dinein' ? 'active-dinein' : ''}`
+                                    },
+                                    '🏠 Здесь'
+                                ),
+                                React.createElement(
+                                    'div',
+                                    {
+                                        onClick: () => setOrderType('takeaway'),
+                                        className: `toggle-btn ${orderType === 'takeaway' ? 'active-takeaway' : ''}`
+                                    },
+                                    '🛍️ С собой'
+                                )
                             ),
+                            
+                            // Инфо и кнопка
                             React.createElement(
-                                'button',
-                                {
-                                    onClick: sendOrder,
-                                    className: 'gold-button text-black px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2 transition-all hover:shadow-xl active:scale-95'
-                                },
-                                '📲 Отправить заказ'
+                                'div',
+                                { className: 'flex items-center justify-between' },
+                                React.createElement(
+                                    'div',
+                                    null,
+                                    React.createElement('span', { className: 'text-amber-200/70 text-sm' }, 'Ваш заказ'),
+                                    React.createElement('div', { className: 'text-2xl font-bold gold-text' }, formatPrice(totalPrice)),
+                                    React.createElement('span', { className: 'text-xs text-amber-200/50' }, `${itemCount} позиций`)
+                                ),
+                                React.createElement(
+                                    'button',
+                                    {
+                                        onClick: sendOrder,
+                                        className: 'gold-button text-black px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2 transition-all hover:shadow-xl active:scale-95'
+                                    },
+                                    '📲 Отправить'
+                                )
                             )
                         )
                     )
