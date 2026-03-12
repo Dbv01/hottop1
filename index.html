@@ -45,6 +45,21 @@
             background-clip: text;
         }
         
+        .promo-banner {
+            background: linear-gradient(135deg, #b8860b 0%, #ffd700 80%, #b8860b 100%);
+            color: #1a0c0c;
+            border-radius: 16px;
+            padding: 12px 16px;
+            box-shadow: 0 10px 25px -8px #ffd70080;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 10px 25px -8px #ffd70080; }
+            50% { box-shadow: 0 10px 30px -4px #ffd700; }
+            100% { box-shadow: 0 10px 25px -8px #ffd70080; }
+        }
+        
         .category-chip {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 215, 0, 0.2);
@@ -110,15 +125,24 @@
             box-shadow: 0 -10px 30px -10px rgba(0, 0, 0, 0.5);
         }
         
-        .order-badge {
-            background: rgba(255, 215, 0, 0.15);
-            border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 100px;
-            padding: 4px 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
+        .comment-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 16px;
+            padding: 12px 16px;
+            color: white;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        .comment-input:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+        }
+        
+        .comment-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
         
         .categories-scroll {
@@ -141,6 +165,15 @@
             background-repeat: repeat;
             background-size: 80px 80px;
         }
+        
+        .badge {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 100px;
+            padding: 2px 8px;
+            font-size: 10px;
+            color: #ffd700;
+        }
     </style>
 </head>
 <body>
@@ -154,12 +187,25 @@
     <script>
         (function() {
             // ================================================================
-            // ⚡ ДАННЫЕ ДЛЯ ХАЛЯЛЬ УЗБЕКСКОЙ КУХНИ
+            // ⚡ ГОТОВЫЙ ПРОДУКТ - ХАЛЯЛЬ УЗБЕКСКАЯ КУХНЯ
             // ================================================================
             const CONFIG = {
+                // 👇 МЕНЯЙ ТОЛЬКО ЭТО
                 managerUsername: "nesterenaa",      // Telegram менеджера
                 brandName: "Халяль · Узбекская кухня",
                 currency: "₽",
+                
+                // 🔥 АКЦИЯ ДНЯ (меняй под клиента)
+                promo: {
+                    enabled: true,
+                    title: "🔥 Комбо «Сытный обед»",
+                    description: "Плов + Лагман + Самса",
+                    oldPrice: 1240,
+                    newPrice: 990,
+                    saving: 250
+                },
+                
+                // Категории
                 categories: ["Выпечка", "Напитки", "Супы", "Гарниры", "Салаты", "Шашлыки", "Горячие блюда", "Соусы"],
                 
                 // Эмодзи для категорий
@@ -174,6 +220,7 @@
                     "Соусы": "🧂"
                 },
                 
+                // ПОЛНОЕ МЕНЮ (40+ позиций)
                 items: [
                     // САЛАТЫ
                     { id: 1, category: "Салаты", name: "Куриный", price: 250, desc: "160 г" },
@@ -235,22 +282,16 @@
             // ================================================================
 
             const STORAGE_KEY = 'uzbek_halal_cart';
+            const COMMENT_KEY = 'uzbek_halal_comment';
             const formatPrice = (p) => `${p} ${CONFIG.currency}`;
 
-            // 📌 Функция для генерации уникального номера заказа
-            // Формат: ДДММ-ЧЧММ (например: 1203-1542 — 12 марта, 15:42)
+            // Генерация уникального номера заказа (ДДММ-ЧЧММ)
             const generateOrderNumber = () => {
                 const now = new Date();
-                
-                // День (2 цифры)
                 const day = String(now.getDate()).padStart(2, '0');
-                // Месяц (2 цифры)
                 const month = String(now.getMonth() + 1).padStart(2, '0');
-                // Часы (2 цифры)
                 const hours = String(now.getHours()).padStart(2, '0');
-                // Минуты (2 цифры)
                 const minutes = String(now.getMinutes()).padStart(2, '0');
-                
                 return `${day}${month}-${hours}${minutes}`;
             };
 
@@ -259,7 +300,16 @@
                     try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } 
                     catch { return {}; }
                 });
+                
+                const [comment, setComment] = React.useState(() => {
+                    return localStorage.getItem(COMMENT_KEY) || '';
+                });
+                
                 const [activeCategory, setActiveCategory] = React.useState(CONFIG.categories[0]);
+
+                React.useEffect(() => {
+                    localStorage.setItem(COMMENT_KEY, comment);
+                }, [comment]);
 
                 React.useEffect(() => {
                     localStorage.setItem(STORAGE_KEY, JSON.stringify(cart));
@@ -273,6 +323,7 @@
                 const itemCount = Object.values(cart).reduce((acc, qty) => acc + qty, 0);
 
                 const addToCart = (itemId) => setCart(prev => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
+                
                 const removeFromCart = (itemId) => {
                     setCart(prev => {
                         const newCart = { ...prev };
@@ -285,7 +336,6 @@
                 const sendOrder = () => {
                     if (itemCount === 0) return;
                     
-                    // 📌 Генерируем уникальный номер для этого заказа
                     const orderNumber = generateOrderNumber();
                     
                     let message = `🥘 *Заказ №${orderNumber}*\n`;
@@ -298,17 +348,28 @@
                         }
                     });
                     
-                    message += `──────────────────\n*💰 Итого: ${formatPrice(totalPrice)}*\n`;
+                    message += `──────────────────\n`;
+                    message += `*💰 Итого: ${formatPrice(totalPrice)}*\n`;
+                    
+                    // ✅ Комментарий добавляется ТОЛЬКО если там что-то есть
+                    if (comment.trim() !== '') {
+                        message += `✏️ *Комментарий:* ${comment.trim()}\n`;
+                    }
+                    
                     message += `⏰ ${new Date().toLocaleTimeString()}`;
                     
                     window.location.href = `https://t.me/${CONFIG.managerUsername}?text=${encodeURIComponent(message)}`;
+                    
+                    // Очищаем корзину после отправки
+                    setCart({});
+                    // Комментарий НЕ очищаем (может пригодиться для следующего заказа)
                 };
 
                 const filteredItems = CONFIG.items.filter(item => item.category === activeCategory);
 
                 return React.createElement(
                     'div',
-                    { className: 'p-5 pb-24 text-white' },
+                    { className: 'p-5 pb-32 text-white' },  // 👈 УВЕЛИЧИЛ ОТСТУП СНИЗУ ДО 32 (было 24)
 
                     // Шапка
                     React.createElement(
@@ -327,10 +388,27 @@
                         )
                     ),
 
+                    // 🔥 АКЦИЯ ДНЯ
+                    CONFIG.promo.enabled &&
+                    React.createElement(
+                        'div',
+                        { className: 'promo-banner mb-5 animate__animated animate__pulse' },
+                        React.createElement('div', { className: 'flex justify-between items-center' },
+                            React.createElement('span', { className: 'font-bold text-lg' }, CONFIG.promo.title),
+                            React.createElement('span', { className: 'bg-black/20 px-2 py-1 rounded-full text-sm' }, `-${CONFIG.promo.saving}₽`)
+                        ),
+                        React.createElement('p', { className: 'text-sm mt-1' }, CONFIG.promo.description),
+                        React.createElement('div', { className: 'flex items-center gap-2 mt-2' },
+                            React.createElement('span', { className: 'line-through text-sm opacity-70' }, formatPrice(CONFIG.promo.oldPrice)),
+                            React.createElement('span', { className: 'font-bold text-xl' }, formatPrice(CONFIG.promo.newPrice)),
+                            React.createElement('span', { className: 'text-xs bg-black/30 px-2 py-1 rounded-full' }, 'экономия')
+                        )
+                    ),
+
                     // Категории
                     React.createElement(
                         'div',
-                        { className: 'mb-6 overflow-x-auto categories-scroll whitespace-nowrap pb-2' },
+                        { className: 'mb-4 overflow-x-auto categories-scroll whitespace-nowrap pb-2' },
                         CONFIG.categories.map(cat =>
                             React.createElement(
                                 'button',
@@ -419,6 +497,23 @@
                                     )
                                 )
                             );
+                        })
+                    ),
+
+                    // 📝 ПОЛЕ ДЛЯ ОСОБЫХ ПОЖЕЛАНИЙ
+                    itemCount > 0 &&
+                    React.createElement(
+                        'div',
+                        { className: 'mt-4 mb-4 animate__animated animate__fadeIn' },  // 👈 ДОБАВИЛ mb-4
+                        React.createElement('label', { className: 'text-sm text-amber-200/70 block mb-2' }, 
+                            '📝 Особые пожелания:'
+                        ),
+                        React.createElement('input', {
+                            type: 'text',
+                            value: comment,
+                            onChange: (e) => setComment(e.target.value),
+                            placeholder: 'Без лука, поострее, с собой...',
+                            className: 'comment-input'
                         })
                     ),
 
