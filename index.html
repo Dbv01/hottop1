@@ -13,7 +13,7 @@
     <style>
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            background: #1a0c0c;  /* глубокий темно-бордовый фон */
+            background: #1a0c0c;
             background-image: radial-gradient(circle at 10% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 20%),
                               radial-gradient(circle at 90% 50%, rgba(255, 215, 0, 0.05) 0%, transparent 25%),
                               repeating-linear-gradient(45deg, rgba(255, 215, 0, 0.02) 0px, rgba(255, 215, 0, 0.02) 2px, transparent 2px, transparent 6px);
@@ -110,6 +110,17 @@
             box-shadow: 0 -10px 30px -10px rgba(0, 0, 0, 0.5);
         }
         
+        .order-badge {
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 100px;
+            padding: 4px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+        
         .categories-scroll {
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
@@ -119,7 +130,6 @@
             display: none;
         }
         
-        /* восточный орнамент для фона */
         .ornament {
             position: fixed;
             top: 0;
@@ -144,7 +154,7 @@
     <script>
         (function() {
             // ================================================================
-            // ⚡ ДАННЫЕ ДЛЯ ХАЛЯЛЬ УЗБЕКСКОЙ КУХНИ (ВСТАВЛЯЙ СВОИХ КЛИЕНТОВ)
+            // ⚡ ДАННЫЕ ДЛЯ ХАЛЯЛЬ УЗБЕКСКОЙ КУХНИ
             // ================================================================
             const CONFIG = {
                 managerUsername: "nesterenaa",      // Telegram менеджера
@@ -152,7 +162,7 @@
                 currency: "₽",
                 categories: ["Выпечка", "Напитки", "Супы", "Гарниры", "Салаты", "Шашлыки", "Горячие блюда", "Соусы"],
                 
-                // Эмодзи для категорий (для красоты)
+                // Эмодзи для категорий
                 categoryIcons: {
                     "Выпечка": "🥖",
                     "Напитки": "🧋",
@@ -227,6 +237,23 @@
             const STORAGE_KEY = 'uzbek_halal_cart';
             const formatPrice = (p) => `${p} ${CONFIG.currency}`;
 
+            // 📌 Функция для генерации уникального номера заказа
+            // Формат: ДДММ-ЧЧММ (например: 1203-1542 — 12 марта, 15:42)
+            const generateOrderNumber = () => {
+                const now = new Date();
+                
+                // День (2 цифры)
+                const day = String(now.getDate()).padStart(2, '0');
+                // Месяц (2 цифры)
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                // Часы (2 цифры)
+                const hours = String(now.getHours()).padStart(2, '0');
+                // Минуты (2 цифры)
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+                
+                return `${day}${month}-${hours}${minutes}`;
+            };
+
             function App() {
                 const [cart, setCart] = React.useState(() => {
                     try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } 
@@ -258,7 +285,11 @@
                 const sendOrder = () => {
                     if (itemCount === 0) return;
                     
-                    let message = `🥘 *Заказ из ${CONFIG.brandName}*\n`;
+                    // 📌 Генерируем уникальный номер для этого заказа
+                    const orderNumber = generateOrderNumber();
+                    
+                    let message = `🥘 *Заказ №${orderNumber}*\n`;
+                    message += `📍 ${CONFIG.brandName}\n`;
                     message += `──────────────────\n`;
                     
                     CONFIG.items.forEach(item => {
@@ -267,7 +298,8 @@
                         }
                     });
                     
-                    message += `──────────────────\n*✨ Итого: ${formatPrice(totalPrice)}*`;
+                    message += `──────────────────\n*💰 Итого: ${formatPrice(totalPrice)}*\n`;
+                    message += `⏰ ${new Date().toLocaleTimeString()}`;
                     
                     window.location.href = `https://t.me/${CONFIG.managerUsername}?text=${encodeURIComponent(message)}`;
                 };
@@ -278,10 +310,10 @@
                     'div',
                     { className: 'p-5 pb-24 text-white' },
 
-                    // Шапка с восточным акцентом
+                    // Шапка
                     React.createElement(
                         'div',
-                        { className: 'flex items-center gap-4 mb-6 animate__animated animate__fadeIn' },
+                        { className: 'flex items-center gap-4 mb-4 animate__animated animate__fadeIn' },
                         React.createElement(
                             'div',
                             { className: 'w-14 h-14 rounded-2xl gold-gradient flex items-center justify-center text-2xl shadow-xl' },
@@ -289,13 +321,13 @@
                         ),
                         React.createElement(
                             'div',
-                            null,
+                            { className: 'flex-1' },
                             React.createElement('h1', { className: 'text-2xl font-bold gold-text' }, CONFIG.brandName),
                             React.createElement('p', { className: 'text-amber-200/70 text-sm' }, '✔️ Халяль · ручная работа')
                         )
                     ),
 
-                    // Категории с иконками
+                    // Категории
                     React.createElement(
                         'div',
                         { className: 'mb-6 overflow-x-auto categories-scroll whitespace-nowrap pb-2' },
@@ -328,7 +360,7 @@
                                     key: item.id,
                                     className: 'item-card p-4 flex gap-4 animate__animated animate__fadeInUp'
                                 },
-                                // Фото с золотым ободком
+                                // Фото
                                 React.createElement(
                                     'div',
                                     { className: 'photo-gold-border w-20 h-20 flex-shrink-0' },
@@ -414,7 +446,7 @@
                                     onClick: sendOrder,
                                     className: 'gold-button text-black px-6 py-3 rounded-xl font-semibold shadow-lg flex items-center gap-2 transition-all hover:shadow-xl active:scale-95'
                                 },
-                                '📲 Отправить в Telegram'
+                                '📲 Отправить заказ'
                             )
                         )
                     )
